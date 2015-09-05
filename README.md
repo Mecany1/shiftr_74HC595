@@ -21,7 +21,7 @@ Dynamic class to manage Shift Register 74HC595 in Raspberry Pi using Python
 
 
 #Example
-    ![Scheme](http://i.picresize.com/images/2014/03/11/xM26G.jpg)
+![Scheme](http://i.picresize.com/images/2014/03/11/xM26G.jpg)
 
     import RPi.GPIO as GPIO
     from shiftr_74HC595.shiftr_74HC595 import ShifRegister
