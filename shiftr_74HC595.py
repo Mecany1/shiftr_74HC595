@@ -21,7 +21,6 @@ class ShifRegister:
 
     """
     output_number => Value from 0 to 7 pointing to the output pin on the 74HC595
-    Values:
     0 => Q0 pin 15 on the 74HC595
     1 => Q1 pin 1 on the 74HC595
     2 => Q2 pin 2 on the 74HC595
@@ -30,6 +29,8 @@ class ShifRegister:
     5 => Q5 pin 5 on the 74HC595
     6 => Q6 pin 6 on the 74HC595
     7 => Q7 pin 7 on the 74HC595
+
+    value => a state to pass to the pin, could be HIGH or LOW
     """
     def setOutput(self, output_number, value):
         try:
