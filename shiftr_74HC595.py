@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 
-class ShifRegister:
+class ShiftRegister:
     register_type = '74HC595'
 
     """
@@ -17,7 +17,7 @@ class ShifRegister:
         GPIO.setup(self.latch_pin, GPIO.OUT)
         GPIO.setup(self.clock_pin, GPIO.OUT)
 
-        self.outputs = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.outputs = [GPIO.LOW] * 8
 
     """
     output_number => Value from 0 to 7 pointing to the output pin on the 74HC595
@@ -38,13 +38,18 @@ class ShifRegister:
         except IndexError:
             raise ValueError("Invalid output number. Can be only an int from 0 to 7")
 
+    def setOutputs(self, outputs):
+        if 8 != len(outputs):
+            raise ValueError("setOutputs must be an array with 8 elements")
+
+        self.outputs = outputs
+
+    def latch(self):
         GPIO.output(self.latch_pin, GPIO.LOW)
-        for output in range(7, -1, -1):
+
+        for i in range(7, -1, -1):
             GPIO.output(self.clock_pin, GPIO.LOW)
-
-            value = self.outputs[output]
-
-            GPIO.output(self.data_pin, value)
+            GPIO.output(self.data_pin, self.outputs[i])
             GPIO.output(self.clock_pin, GPIO.HIGH)
 
         GPIO.output(self.latch_pin, GPIO.HIGH)

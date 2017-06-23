@@ -3,69 +3,94 @@ Shift Register 74HC595
 
 Dynamic class to manage Shift Register 74HC595 in Raspberry Pi using Python
 
-#Requirements
+## Requirements
 
     * Raspberry Pi
     * Python 2.6+ and Python development tools
     * RPi.GPIO (latest version recommended)
 
-#Installation
+## Installation
 
-    Install RPi.GPIO library and Python development tools:
+Install RPi.GPIO library and Python development tools:
 
-        # sudo apt-get update && sudo apt-get -y install python-rpi.gpio python-dev
+``` bash
+sudo apt-get update && sudo apt-get -y install python-rpi.gpio python-dev
+```
 
-    Get this library:
+Get this library:
 
-        # git clone git@github.com:marsminds/shiftr_74HC595.git
+``` bash
+git clone git@github.com:marsminds/shiftr_74HC595.git
+```
 
-
-#Example
+## Example
 ![Scheme](http://marsminds.com/wp-content/uploads/2015/09/74hc595_leds_bb.jpg)
 
-    import RPi.GPIO as GPIO
-    from shiftr_74HC595.shiftr_74HC595 import ShifRegister
-    from time import sleep
+``` python
+import RPi.GPIO as GPIO
+from shiftr_74HC595.shiftr_74HC595 import ShiftRegister
+from time import sleep
 
-    GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BOARD)
 
-    data_pin = 7 #pin 14 on the 75HC595
-    latch_pin = 11 #pin 12 on the 75HC595
-    clock_pin = 12 #pin 11 on the 75HC595
-    shift_register = ShifRegister(data_pin, latch_pin, clock_pin)
+data_pin = 7 #pin 14 on the 75HC595
+latch_pin = 11 #pin 12 on the 75HC595
+clock_pin = 12 #pin 11 on the 75HC595
 
-    try:
-        while 1:
-            shift_register.setOutput(0, GPIO.HIGH)
-            shift_register.setOutput(1, GPIO.LOW)
-            shift_register.setOutput(2, GPIO.LOW)
-            shift_register.setOutput(3, GPIO.LOW)
-            shift_register.setOutput(4, GPIO.HIGH)
-            shift_register.setOutput(5, GPIO.LOW)
-            shift_register.setOutput(6, GPIO.LOW)
-            shift_register.setOutput(7, GPIO.HIGH)
-            sleep(1)
+shift_register = ShiftRegister(data_pin, latch_pin, clock_pin)
 
-            shift_register.setOutput(0, GPIO.LOW)
-            shift_register.setOutput(1, GPIO.HIGH)
-            shift_register.setOutput(2, GPIO.HIGH)
-            shift_register.setOutput(3, GPIO.HIGH)
-            shift_register.setOutput(4, GPIO.LOW)
-            shift_register.setOutput(5, GPIO.HIGH)
-            shift_register.setOutput(6, GPIO.HIGH)
-            shift_register.setOutput(7, GPIO.LOW)
-            sleep(1)
-    except KeyboardInterrupt:
-        print "Ctrl-C - quit"
+try:
+    while 1:
+        # Set all outputs
+        shift_register.setOutputs([GPIO.HIGH, GPIO.LOW, GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.LOW, GPIO.LOW, GPIO.HIGH])
 
-    GPIO.cleanup()
+        # Display
+        shift_register.latch()
 
-## Class ShifRegister(data_pin, latch_pin, clock_pin)
+        sleep(1)
+
+        # Set some output individually
+        shift_register.setOutput(0, GPIO.LOW)
+        shift_register.setOutput(5, GPIO.HIGH)
+
+        shift_register.latch()
+
+        sleep(1)
+except KeyboardInterrupt:
+    print "Ctrl-C - quit"
+
+GPIO.cleanup()
+```
+
+## API
+
+### Constructor
+
+Instanciate and configure pin of a shift register.
+
+``` python
+ShiftRegister(data_pin, latch_pin, clock_pin)
+```
+
     data_pin => pin 14 on the 74HC595
     latch_pin => pin 12 on the 74HC595
     clock_pin => pin 11 on the 74HC595
 
-## Method setOutput(output_number, value)
+Example:
+
+``` python
+# Instanciate a new shiftregister wired on pins 14, 15, 18 of the Raspberry
+shift_register = ShiftRegister(14, 15, 18)
+```
+
+### Method setOutput
+
+Update an individual output of the shift register.
+
+``` python
+shift_register.setOutput(output_number, value)
+```
+
     output_number => Value from 0 to 7 pointing to the output pin on the 74HC595
     0 => Q0 pin 15 on the 74HC595
     1 => Q1 pin 1 on the 74HC595
@@ -77,3 +102,49 @@ Dynamic class to manage Shift Register 74HC595 in Raspberry Pi using Python
     7 => Q7 pin 7 on the 74HC595
 
     value => a state to pass to the pin, could be HIGH or LOW
+
+Example:
+
+``` python
+# Set Q3 to high in register
+shift_register.setOutput(3, GPIO.HIGH)
+
+shift_register.latch()
+```
+
+### Method setOutputs
+
+Update all outputs of the shift register.
+
+``` python
+shift_register.setOutputs(outputs)
+```
+
+    outputs => an array of height GPIO.LOW or GPIO.HIGH
+
+Example:
+
+``` python
+# Draw a zebra
+shift_register.setOutputs([GPIO.LOW, GPIO.HIGH,  GPIO.LOW, GPIO.HIGH, GPIO.LOW, GPIO.HIGH, GPIO.LOW, GPIO.HIGH])
+
+shift_register.latch()
+```
+
+### Method latch
+
+Clock the shift register so the updated values are sent to shift register outputs.
+
+``` python
+shift_register.latch()
+```
+
+Example:
+
+``` python
+# Perform some updates...
+shift_register.setOutput(3, GPIO.HIGH)
+
+# Display result
+shift_register.latch()
+```
