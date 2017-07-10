@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='shiftr_74HC595',
-      version='1.0',
+      version='1.0.0',
       description='Dynamic class to manage Shift Register 74HC595 in Raspberry Pi using Python',
       long_description=readme(),
       url='https://github.com/marsminds/shiftr_74HC595',
