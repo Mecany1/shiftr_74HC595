@@ -19,9 +19,12 @@ sudo apt-get update && sudo apt-get -y install python-rpi.gpio python-dev
 
 Get this library:
 
+Using pip:
+
 ``` bash
-git clone git@github.com:marsminds/shiftr_74HC595.git
+pip install git+https://github.com/marsminds/shiftr_74HC595.git
 ```
+
 
 ## Example
 ![Scheme](http://marsminds.com/wp-content/uploads/2015/09/74hc595_leds_bb.jpg)
